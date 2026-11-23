@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100d1c">
+  <title>Slay the Spire 2 Guess the Card</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/room.css">
+  <script type="module" src="/home.js"></script>
+</head>
+<body class="tavern home">
+  <header class="room-bar">
+    <span class="room-brand" lang="en"><span class="brand-symbol" aria-hidden="true"></span>Guess the Card</span>
+    <a class="compendium" id="home-compendium" href="/catalog" hidden><img src="/assets/room/compendium.png" alt="">卡牌图鉴</a>
+  </header>
+  <main class="home-content">
+    <div class="home-title" lang="en"><h1>Slay the Spire 2 <span>Guess the Card</span></h1></div>
+    <form class="join-panel" id="join-form">
+      <fieldset class="avatar-picker">
+        <legend>头像</legend>
+        <div id="avatar-options" class="avatar-options"></div>
+      </fieldset>
+      <label for="nickname">你的昵称</label>
+      <input id="nickname" name="nickname" type="text" maxlength="32" autocomplete="nickname" required>
+      <label for="pin">房间号</label>
+      <input id="pin" name="pin" type="text" placeholder="0000" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required>
+      <button type="submit" class="game-button primary" id="join-button" disabled>加入房间</button>
+      <p id="home-status" class="form-status" role="status"></p>
+    </form>
+  </main>
+</body>
+</html>

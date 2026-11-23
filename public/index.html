@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111219">
+  <title>卡牌图鉴 · 杀戮尖塔 2</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="quiet catalog-back" id="catalog-back" href="/">
+        <span class="catalog-back-arrow" aria-hidden="true">←</span>
+        <span id="catalog-back-label">返回首页</span>
+      </a>
+      <span class="build" id="build" hidden></span>
+    </div>
+  </header>
+  <main class="shell catalog-content">
+    <section class="intro" aria-labelledby="title">
+      <h1 id="title">卡牌图鉴</h1>
+      <div class="total"><strong id="total">—</strong><span>张卡牌</span></div>
+    </section>
+    <section class="filters" aria-label="卡牌筛选">
+      <div class="filter-head">
+        <label class="search-label"><span>搜索卡牌</span><input type="search" id="search" placeholder="名称、卡牌 ID 或效果"></label>
+        <label>卡池<select id="pool"><option value="">全部卡池</option></select></label>
+        <label>类型<select id="type"><option value="">全部类型</option></select></label>
+        <label>费用<select id="cost"><option value="">全部费用</option><option value="0">0 费</option><option value="1">1 费</option><option value="2">2 费</option><option value="3+">3 费以上</option><option value="X">X 费</option><option value="none">无能量费用</option></select></label>
+        <label>稀有度<select id="rarity"><option value="">全部稀有度</option></select></label>
+        <div class="filter-actions">
+          <button type="button" class="more-toggle" id="more-filters" aria-expanded="false" aria-controls="advanced-filters">更多筛选<span id="active-color" class="filter-badge" hidden></span></button>
+          <button type="button" class="filter-reset" id="reset">清空</button>
+        </div>
+      </div>
+      <div class="facet" id="advanced-filters" hidden>
+        <span id="color-label">颜色</span>
+        <div class="chips" id="colors" role="group" aria-labelledby="color-label"></div>
+      </div>
+    </section>
+    <section aria-labelledby="results-heading" class="results">
+      <div class="results-head">
+        <div><h2 id="results-heading">卡牌列表</h2><p id="count" role="status">加载中…</p></div>
+        <div class="result-actions">
+          <label class="switch"><input type="checkbox" id="upgraded"><span>预览升级</span></label>
+          <label class="sort-label"><span class="sr-only">排序</span><select id="sort"><option value="rarity" selected>按稀有度</option><option value="name">中文名称</option><option value="energy">费用从低到高</option><option value="pool">按卡池</option></select></label>
+        </div>
+      </div>
+      <div id="cards" class="card-grid"></div>
+      <nav class="pagination" id="pagination" aria-label="卡牌分页" hidden>
+        <button type="button" id="prev">上一页</button><span id="page"></span><button type="button" id="next">下一页</button>
+      </nav>
+    </section>
+  </main>
+  <dialog id="detail" aria-labelledby="detail-title"></dialog>
+</body>
+</html>

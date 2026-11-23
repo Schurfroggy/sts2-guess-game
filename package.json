@@ -1,0 +1,10 @@
+{
+  "name": "sts2ciku",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "import": "node scripts/import.mjs"
+  }
+}

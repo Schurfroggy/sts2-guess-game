@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100d1c">
+  <title>好友房 · Guess the Card</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/room.css">
+  <script type="module" src="/room.js"></script>
+</head>
+<body class="tavern play">
+  <header class="room-bar">
+    <a class="compendium" id="room-compendium" href="/catalog" hidden><img src="/assets/room/compendium.png" alt="">卡牌图鉴</a>
+    <div class="room-actions">
+      <button class="game-button" id="host-settings" type="button" hidden>房主设置</button>
+      <button class="game-button" id="end-round" type="button" hidden>结束本局</button>
+      <button class="game-button" id="exit-room" type="button" hidden>离开房间</button>
+    </div>
+  </header>
+  <main class="room-content">
+    <div class="room-heading">
+      <div class="room-identity">
+        <h1>房间 <span id="room-pin">····</span></h1>
+        <p id="room-status" class="room-state" role="status">正在恢复房间…</p>
+      </div>
+      <div class="memory-status" id="memory-status" hidden>
+        <p id="memory-usage"></p>
+        <button class="game-button" id="clear-memory" type="button" hidden>清空记忆池</button>
+      </div>
+    </div>
+    <section class="arena" id="arena" aria-label="猜牌桌">
+      <div class="table-center">
+        <p class="eyebrow" id="round-label" hidden></p>
+        <h2 id="turn-label">等待开局</h2>
+        <p id="turn-detail"></p>
+        <div class="turn-actions" id="turn-actions" role="group" aria-label="牌桌操作" hidden>
+          <button class="game-button primary" id="table-action" type="button" hidden>开始游戏</button>
+          <button class="game-button turn-button skip-button" id="skip-turn" type="button" hidden>跳过</button>
+          <button class="game-button turn-button catalog-button" id="turn-catalog" type="button" aria-controls="confirm-dialog" hidden><span>查看<wbr>图鉴</span></button>
+        </div>
+      </div>
+      <ol class="seats" id="seats" aria-label="按逆时针排列的参赛座位"></ol>
+      <div class="deal-layer" id="deal-layer" aria-hidden="true"></div>
+      <div class="prop-layer" id="prop-layer" aria-hidden="true"></div>
+    </section>
+    <div class="room-summary">
+      <div class="room-notices">
+        <p id="own-card-notice" role="status"></p>
+        <p id="game-notice" role="status"></p>
+        <p id="spectators" hidden></p>
+      </div>
+      <div class="room-reactions" id="room-reactions" role="group" aria-label="勾叉发言" hidden></div>
+      <button class="game-button banter-trigger" id="open-banter" type="button" aria-label="快捷发言"
+        title="快捷发言" aria-haspopup="dialog" aria-controls="banter-dialog" hidden>
+        <!-- Element Plus ChatDotRound. See THIRD_PARTY_NOTICES. -->
+        <svg width="24" height="24" viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true">
+          <path d="M174.7 855.7L310 810.6l23.7 11.8A398 398 0 0 0 512 864c211.8 0 384-166.8 384-352S723.8 160 512 160S128 326.8 128 512c0 69.1 25 139.3 70.8 199.2L221 740zm-45.2 82.5A32 32 0 0 1 89.6 896L148 750c-53.3-69.6-84-153-84-238C64 299.9 256 96 512 96s448 203.9 448 416s-192 416-448 416a461 461 0 0 1-207-48.4z"/>
+          <path d="M512 563.2a51.2 51.2 0 1 1 0-102.4a51.2 51.2 0 0 1 0 102.4m192 0a51.2 51.2 0 1 1 0-102.4a51.2 51.2 0 0 1 0 102.4m-384 0a51.2 51.2 0 1 1 0-102.4a51.2 51.2 0 0 1 0 102.4"/>
+        </svg>
+      </button>
+    </div>
+    <p class="sr-only" id="banter-announcer" role="status"></p>
+  </main>
+  <div class="prop-menu" id="prop-menu" role="dialog" aria-label="互动道具" hidden>
+    <button class="game-button" type="button" data-prop="flower"><img src="/assets/room/prop-flower.svg" alt="">鲜花</button>
+    <button class="game-button" type="button" data-prop="egg"><img src="/assets/room/prop-egg.svg" alt="">鸡蛋</button>
+    <p role="status"></p>
+  </div>
+  <dialog class="game-dialog small-dialog" id="banter-dialog" aria-labelledby="banter-title">
+    <div class="dialog-panel">
+      <div class="game-dialog-head"><h2 id="banter-title">快捷发言</h2><button class="game-button" data-close type="button">关闭</button></div>
+      <div class="banter-options" id="banter-options"></div>
+      <p class="form-status" id="banter-status" role="status"></p>
+    </div>
+  </dialog>
+  <dialog class="game-dialog" id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-panel">
+      <div class="game-dialog-head"><h2 id="settings-title">房主设置</h2><button class="game-button" data-close type="button">关闭</button></div>
+      <form id="settings-form">
+        <fieldset class="settings-group">
+          <legend>卡池</legend>
+          <div class="settings-chips" id="settings-pools"></div>
+        </fieldset>
+        <label for="guess-limit">每回合猜测次数</label>
+        <select id="guess-limit" name="maxGuesses">
+          <option value="1">1 次</option>
+          <option value="2">2 次</option>
+          <option value="3">3 次</option>
+          <option value="4">4 次</option>
+          <option value="5">5 次</option>
+        </select>
+        <label class="switch"><input type="checkbox" id="guess-suggestions" name="guessSuggestions">允许关键词联想</label>
+        <label class="switch"><input type="checkbox" id="allow-catalog-lookup" name="allowCatalogLookup">允许消耗整回合查看图鉴</label>
+        <button type="submit" class="game-button primary">保存设置</button>
+      </form>
+      <form id="transfer-form">
+        <label for="transfer-player">转移房主</label>
+        <select id="transfer-player" required></select>
+        <button type="submit" class="game-button">转移</button>
+      </form>
+      <p class="form-status" id="settings-status" role="status"></p>
+    </div>
+  </dialog>
+  <dialog class="game-dialog small-dialog" id="guess-dialog" aria-labelledby="guess-title">
+    <form class="dialog-panel" id="guess-form">
+      <div class="game-dialog-head"><h2 id="guess-title">猜测你的牌</h2><button class="game-button" data-close type="button">关闭</button></div>
+      <label for="guess-answer">输入完整的简体中文卡名</label>
+      <p id="guess-remaining"></p>
+      <input id="guess-answer" name="answer" type="text" maxlength="120" autocomplete="off" spellcheck="false" aria-controls="guess-matches" required>
+      <ul class="guess-matches" id="guess-matches" aria-label="卡名联想" hidden></ul>
+      <button type="submit" class="game-button primary">提交猜测</button>
+      <p id="guess-status" class="form-status" role="status"></p>
+    </form>
+  </dialog>
+  <dialog class="game-dialog card-dialog" id="card-dialog" aria-labelledby="room-card-title">
+    <div class="dialog-panel">
+      <div class="game-dialog-head">
+        <div class="card-title-line">
+          <h2 id="room-card-title">查看卡面</h2>
+          <div class="community-score" id="room-community-score"></div>
+        </div>
+        <button class="game-button" data-close type="button" autofocus>关闭</button>
+      </div>
+      <div class="room-card-face" id="room-card-face"></div>
+      <div id="room-kao-stats"><button type="button" class="game-button primary card-rate" id="rate-card" aria-label="考评分" aria-pressed="false" hidden>考</button></div>
+      <div class="card-actions">
+        <label class="switch" id="card-upgrade-label"><input type="checkbox" id="card-upgrade">查看升级</label>
+        <button type="button" class="game-button" id="vote-card" hidden>投票换牌</button>
+      </div>
+      <p id="card-status" class="form-status" role="status"></p>
+    </div>
+  </dialog>
+  <dialog class="game-dialog small-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="dialog-panel">
+      <h2 id="confirm-title">确认操作</h2>
+      <p id="confirm-text"></p>
+      <div class="confirm-actions">
+        <button class="game-button" data-close type="button" autofocus>取消</button>
+        <button class="game-button primary" id="confirm-action" type="button">确认</button>
+      </div>
+      <p id="confirm-status" class="form-status" role="status"></p>
+    </div>
+  </dialog>
+</body>
+</html>
